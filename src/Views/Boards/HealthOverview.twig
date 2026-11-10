@@ -1,0 +1,46 @@
+<div class="p-2">
+  <div class="mb-2 text-sm">
+    {{ translate('Servers managed by') }} <b>{{ viewParams.userName }}</b>
+  </div>
+
+  <div class="flex gap-3 flex-wrap mb-3">
+    {% for item in viewParams.summary %}
+      <div style="border-left: 6px solid {{ item.color }}; padding: 2px 12px; min-width: 80px;">
+        <div style="font-size: 1.6em; font-weight: 600;">{{ item.count }}</div>
+        <div class="text-sm">{{ item.label }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if viewParams.total == 0 %}
+    <div class="badge badge-info">{{ translate('There are no servers to show.') }}</div>
+  {% else %}
+    <table class="table-default dense">
+      <thead>
+        <tr>
+          <th>{{ translate('Server') }}</th>
+          <th>{{ translate('Customer') }}</th>
+          <th>{{ translate('Datacenter') }}</th>
+          <th>{{ translate('Health') }}</th>
+          <th>{{ translate('Last check') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in viewParams.servers %}
+          <tr>
+            <td><a href="{{ viewParams.projectUrl }}/server-report/{{ s.id }}" target="_blank">{{ s.name }}</a></td>
+            <td>{{ s.customer }}</td>
+            <td>{{ s.datacenter }}</td>
+            <td>
+              <span style="background: {{ s.color }}; color: #ffffff; border-radius: 4px; padding: 1px 8px;">{{ s.label }}</span>
+            </td>
+            <td>
+              {% if s.checked_at %}{{ s.checked_at }}{% else %}-{% endif %}
+              {% if s.stale %}<span style="color: #dc2626;"> ({{ translate('no recent check') }})</span>{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>

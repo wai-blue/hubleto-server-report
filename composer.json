@@ -1,0 +1,11 @@
+{
+    "name": "wai-blue/hubleto-server-report",
+    "license": "MIT",
+    "description": "Keeps track of the servers an IT team manages",
+    "autoload": {
+        "psr-4": {
+            "Hubleto\\App\\External\\WaiBlue\\ServerReport\\": "src"
+        }
+    },
+    "minimum-stability": "dev"
+}

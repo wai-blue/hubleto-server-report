@@ -1,0 +1,80 @@
+<div class="flex">
+  <h1 class="app-main-title">{{ translate('Servers') }}: {{ translate('Settings') }}</h1>
+  {% if viewParams.settingsSaved %}
+    <div class="badge badge-info text-sm ml-4">{{ translate('Settings saved.') }}</div>
+  {% endif %}
+</div>
+
+<script>
+  function saveSettings() {
+    $("#settings-form").submit();
+  }
+</script>
+
+<div class="mt-10 w-1/2 m-auto">
+  <div>
+    <a href="{{ viewParams.projectUrl }}/server-report/tags" class="btn btn-transparent btn-square w-32">
+      <span class="icon"><i class="fas fa-tag"></i></span>
+      <span class="text">{{ translate('Server tags') }}</span>
+    </a>
+    <a href="{{ viewParams.projectUrl }}/server-report/activity-templates" class="btn btn-transparent btn-square w-32">
+      <span class="icon"><i class="fas fa-clipboard-list"></i></span>
+      <span class="text">{{ translate('Typical activities') }}</span>
+    </a>
+  </div>
+  <form id="settings-form" action="" method="POST" class="mt-2">
+    <input type="hidden" name="settingsChanged" value="1">
+    <table class="table-default">
+      <tbody>
+        <tr>
+          <td>{{ translate('Calendar color') }}</td>
+          <td>
+            <input
+              type="text" name="calendarColor"
+              class="hubleto component input"
+              value="{{ viewParams.settings.calendarColor }}"
+              onchange="saveSettings();"
+              style="border-left: 2em solid {{ viewParams.settings.calendarColor }}"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>{{ translate('Detailed dashboard: number of days of performed activities') }}</td>
+          <td>
+            <input type="number" min="1" name="detailDays" class="hubleto component input" value="{{ viewParams.settings.detailDays }}" onchange="saveSettings();" />
+          </td>
+        </tr>
+        <tr>
+          <td>{{ translate('PDF server report: number of days of performed activities') }}</td>
+          <td>
+            <input type="number" min="1" name="reportDays" class="hubleto component input" value="{{ viewParams.settings.reportDays }}" onchange="saveSettings();" />
+          </td>
+        </tr>
+        <tr>
+          <td>{{ translate('Report a server as "without recent health check" after (days)') }}</td>
+          <td>
+            <input type="number" min="1" name="staleHealthDays" class="hubleto component input" value="{{ viewParams.settings.staleHealthDays }}" onchange="saveSettings();" />
+          </td>
+        </tr>
+        <tr>
+          <td>{{ translate('Reject connection details and configuration that look like they contain a password') }}</td>
+          <td>
+            <select name="rejectSecrets" class="hubleto component input" onchange="saveSettings();">
+              <option value="1" {% if viewParams.settings.rejectSecrets == 1 %}selected{% endif %}>{{ translate('Yes') }}</option>
+              <option value="0" {% if viewParams.settings.rejectSecrets != 1 %}selected{% endif %}>{{ translate('No') }}</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>{{ translate('Create a draft of a report when an activity is completed') }}</td>
+          <td>
+            <select name="autoDraftReport" class="hubleto component input" onchange="saveSettings();">
+              <option value="1" {% if viewParams.settings.autoDraftReport == 1 %}selected{% endif %}>{{ translate('Yes') }}</option>
+              <option value="0" {% if viewParams.settings.autoDraftReport != 1 %}selected{% endif %}>{{ translate('No') }}</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>

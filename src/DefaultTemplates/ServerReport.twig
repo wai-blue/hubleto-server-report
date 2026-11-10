@@ -1,0 +1,114 @@
+<style>
+  body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 11px; color: #111827; }
+  h1 { font-size: 20px; margin: 0 0 4px 0; }
+  h2 { font-size: 14px; margin: 18px 0 6px 0; padding-bottom: 3px; border-bottom: 2px solid #0ea5e9; }
+  .muted { color: #6b7280; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 1px solid #d1d5db; padding: 4px 6px; text-align: left; vertical-align: top; }
+  th { background: #f3f4f6; }
+  td.label { width: 28%; background: #f9fafb; font-weight: bold; }
+  .badge { color: #ffffff; padding: 2px 8px; border-radius: 3px; font-weight: bold; }
+</style>
+
+<h1>{{ name }}</h1>
+<div class="muted">Server report &middot; generated {{ generated_at }}</div>
+
+<h2>Server details</h2>
+<table>
+  <tr><td class="label">Name</td><td>{{ name }}</td></tr>
+  <tr><td class="label">State</td><td>{% if is_closed %}Closed{% else %}Open{% endif %}{% if workflow_step_name %} &middot; {{ workflow_step_name }}{% endif %}</td></tr>
+  <tr><td class="label">Description</td><td>{{ description|default('-')|nl2br }}</td></tr>
+  <tr><td class="label">Customer</td><td>{{ customer_name|default('-') }}</td></tr>
+  <tr><td class="label">Responsible administrator</td><td>{{ owner_name|default('-') }}</td></tr>
+  <tr><td class="label">Manager</td><td>{{ manager_name|default('-') }}</td></tr>
+  <tr><td class="label">Tags</td><td>{% if tags|length > 0 %}{{ tags|join(', ') }}{% else %}-{% endif %}</td></tr>
+  <tr><td class="label">How to connect</td><td>{{ connection_details|default('-')|nl2br }}</td></tr>
+  <tr><td class="label">Documentation</td><td>
+    {% if doc_url_1 %}{{ doc_url_1 }}<br/>{% endif %}
+    {% if doc_url_2 %}{{ doc_url_2 }}<br/>{% endif %}
+    {% if doc_url_3 %}{{ doc_url_3 }}{% endif %}
+    {% if not doc_url_1 and not doc_url_2 and not doc_url_3 %}-{% endif %}
+  </td></tr>
+  <tr><td class="label">Notes</td><td>{{ note|default('-')|nl2br }}</td></tr>
+</table>
+
+<h2>Location</h2>
+<table>
+  <tr><td class="label">Datacenter</td><td>{{ datacenter_name|default('-') }}</td></tr>
+  <tr><td class="label">Datacenter address</td><td>{{ datacenter_address|default('-') }}</td></tr>
+  <tr><td class="label">Room / rack / position</td><td>{{ room|default('-') }} / {{ rack|default('-') }} / {{ rack_position|default('-') }}</td></tr>
+</table>
+
+<h2>Hardware provider</h2>
+<table>
+  <tr><td class="label">Provider</td><td>{{ provider_name|default('-') }}</td></tr>
+  <tr><td class="label">Address</td><td>{{ provider_address|default('-') }}</td></tr>
+  <tr><td class="label">Contact</td><td>{{ provider_contact|default('-') }}</td></tr>
+  <tr><td class="label">Invoicing</td><td>{{ provider_invoicing|default('-') }}{% if provider_invoicing_address %}<br/>{{ provider_invoicing_address|nl2br }}{% endif %}</td></tr>
+</table>
+
+<h2>Current health</h2>
+{% if health %}
+  <p>
+    <span class="badge" style="background: {{ health.color }};">{{ health.label }}</span>
+    &nbsp; checked {{ health.checked_at }}{% if health.checked_by %} by {{ health.checked_by }}{% endif %}
+  </p>
+  {% if health.status|length > 0 %}
+    <table>
+      <tr><th style="width: 40%;">Indicator</th><th>Value</th></tr>
+      {% for key, value in health.status %}
+        <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+  {% if health.note %}<p>{{ health.note|nl2br }}</p>{% endif %}
+
+  {% if health_history|length > 1 %}
+    <p class="muted" style="margin-top: 10px;">Latest health checks</p>
+    <table>
+      <tr><th>Checked at</th><th>Status</th><th>Checked by</th></tr>
+      {% for h in health_history %}
+        <tr><td>{{ h.checked_at }}</td><td>{{ h.label }}</td><td>{{ h.checked_by }}</td></tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+{% else %}
+  <p>No health check has been recorded for this server.</p>
+{% endif %}
+
+<h2>Application stack</h2>
+{% if stack|length > 0 %}
+  <table>
+    <tr><th>Application</th><th>Version</th><th>Recorded</th></tr>
+    {% for item in stack %}
+      <tr><td>{{ item.name }}</td><td>{{ item.version }}</td><td>{{ item.recorded_at }}</td></tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No applications recorded.</p>
+{% endif %}
+
+<h2>Activities performed in the last {{ period_days }} days (since {{ period_from }})</h2>
+{% if activities|length > 0 %}
+  <table>
+    <tr><th style="width: 12%;">Date</th><th style="width: 22%;">Activity</th><th style="width: 12%;">Worked by</th><th>Steps, result and follow-up</th></tr>
+    {% for a in activities %}
+      <tr>
+        <td>{{ a.date }}{% if a.time %}<br/>{{ a.time }}{% endif %}</td>
+        <td>{{ a.subject }}</td>
+        <td>{{ a.worker }}</td>
+        <td>
+          {% if a.has_report %}
+            {% if a.steps %}<b>Steps:</b> {{ a.steps|nl2br }}<br/>{% endif %}
+            {% if a.result %}<b>Result:</b> {{ a.result|nl2br }}<br/>{% endif %}
+            {% if a.followup %}<b>Follow-up:</b> {{ a.followup|nl2br }}{% endif %}
+          {% else %}
+            <span class="muted">Completed, no report written.</span>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No activities were performed in this period.</p>
+{% endif %}

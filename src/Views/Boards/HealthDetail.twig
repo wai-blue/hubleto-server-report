@@ -1,0 +1,84 @@
+<div class="p-2">
+  <div class="mb-2 text-sm">
+    {{ translate('Servers managed by') }} <b>{{ viewParams.userName }}</b>,
+    {{ translate('activities since') }} <b>{{ viewParams.since }}</b> ({{ viewParams.days }} {{ translate('days') }})
+  </div>
+
+  <div class="flex gap-3 flex-wrap mb-3">
+    {% for item in viewParams.summary %}
+      <div style="border-left: 6px solid {{ item.color }}; padding: 2px 12px; min-width: 80px;">
+        <div style="font-size: 1.6em; font-weight: 600;">{{ item.count }}</div>
+        <div class="text-sm">{{ item.label }}</div>
+      </div>
+    {% endfor %}
+    <div style="border-left: 6px solid #0ea5e9; padding: 2px 12px; min-width: 80px;">
+      <div style="font-size: 1.6em; font-weight: 600;">{{ viewParams.activityCount }}</div>
+      <div class="text-sm">{{ translate('activities performed') }}</div>
+    </div>
+    <div style="border-left: 6px solid #f59e0b; padding: 2px 12px; min-width: 80px;">
+      <div style="font-size: 1.6em; font-weight: 600;">{{ viewParams.followupCount }}</div>
+      <div class="text-sm">{{ translate('follow-ups required') }}</div>
+    </div>
+  </div>
+
+  {% if viewParams.total == 0 %}
+    <div class="badge badge-info">{{ translate('There are no servers to show.') }}</div>
+  {% endif %}
+
+  {% for s in viewParams.servers %}
+    <div style="border: 1px solid #e5e7eb; border-left: 6px solid {{ s.color }}; border-radius: 6px; padding: 8px 12px; margin-bottom: 8px;">
+      <div class="flex gap-2" style="align-items: center; flex-wrap: wrap;">
+        <a href="{{ viewParams.projectUrl }}/server-report/{{ s.id }}" target="_blank" style="font-weight: 600;">{{ s.name }}</a>
+        <span style="background: {{ s.color }}; color: #ffffff; border-radius: 4px; padding: 1px 8px;">{{ s.label }}</span>
+        {% if s.customer %}<span class="text-sm">{{ s.customer }}</span>{% endif %}
+        <span class="text-sm" style="margin-left: auto;">
+          {% if s.checked_at %}{{ translate('Last check') }}: {{ s.checked_at }}{% else %}{{ translate('No health check recorded') }}{% endif %}
+          {% if s.stale %}<span style="color: #dc2626;"> ({{ translate('no recent check') }})</span>{% endif %}
+        </span>
+      </div>
+
+      {% if s.note %}<div class="text-sm mt-1">{{ s.note }}</div>{% endif %}
+
+      {% if s.metrics|length > 0 %}
+        <div class="flex gap-4 flex-wrap mt-2">
+          {% for key, value in s.metrics %}
+            {% if key ends with '_percent' %}
+              {% set barColor = value >= 90 ? '#dc2626' : (value >= 75 ? '#ea580c' : '#16a34a') %}
+              <div style="min-width: 150px;">
+                <div class="text-xs">{{ key|replace({'_percent': '', '_': ' '}) }}: {{ value }} %</div>
+                <div style="background: #e5e7eb; border-radius: 3px; height: 8px;">
+                  <div style="background: {{ barColor }}; width: {{ min(value, 100) }}%; height: 8px; border-radius: 3px;"></div>
+                </div>
+              </div>
+            {% else %}
+              <div class="text-xs">{{ key|replace({'_': ' '}) }}: <b>{{ value }}</b></div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="text-sm mt-2">
+        {{ translate('Activities performed') }}: <b>{{ s.activity_count }}</b>
+        {% if s.followup_count > 0 %}
+          &nbsp;|&nbsp; <span style="color: #b45309;">{{ translate('Follow-ups required') }}: <b>{{ s.followup_count }}</b></span>
+        {% endif %}
+      </div>
+
+      {% if s.recent_reports|length > 0 %}
+        <table class="table-default dense mt-1">
+          <tbody>
+            {% for r in s.recent_reports %}
+              <tr>
+                <td style="white-space: nowrap;">{{ r.date }}</td>
+                <td>{{ r.subject }}</td>
+                <td>{{ r.worker }}</td>
+                <td>{{ r.result|length > 80 ? r.result|slice(0, 80) ~ '...' : r.result }}</td>
+                <td>{% if r.has_followup %}<span style="color: #b45309;">{{ translate('follow-up') }}</span>{% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>

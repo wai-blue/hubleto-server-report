@@ -7,6 +7,9 @@
     * description of the server
     * details about how to connect to the server, do not store passwords
     * boolean column "is_closed"
+    * three hyperlink inputs for external documentation
+    * tagging like in customers or leads
+    * "id_owner", "id_manager" and "shared_with" columns
     * application stack with history (this should be a separated table linked by 1:N lookup), for each app keep track of used version (varchar) and its configuration (JSON)
     * health status with history (this should be a separated table linked by 1:N lookup), status stored as JSON
     * designate responsible administrator and manager of the server

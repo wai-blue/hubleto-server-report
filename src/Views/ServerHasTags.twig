@@ -1,0 +1,10 @@
+<h1 class="app-main-title">{{ translate('Server tag assignments') }}</h1>
+
+<hblreact-server-report-table-server-has-tags
+  string:tag="table-server-has-tags"
+  int:record-id="{{ viewParams.recordId }}"
+  string:fulltext-search='{{ viewParams.q }}'
+  json:column-search='{{ viewParams.search|json_encode }}'
+  json:filters='{{ viewParams.filters|json_encode }}'
+  string:form-active-tab-uid='{{ viewParams.tab }}'
+></hblreact-server-report-table-server-has-tags>

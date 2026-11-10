@@ -1,0 +1,24 @@
+namespace: Hubleto\App\External\WaiBlue\ServerReport
+appType: custom
+sidebarGroup: custom
+rootUrlSlug: server-report
+name: Server report
+icon: fas fa-server
+author:
+  name: "Custom app"
+  nick: "server-report"
+  company: "Custom app"
+highlight: Keep track of the servers your team manages - health, application stack, planned activities, reports and PDF server reports.
+requires:
+  - Hubleto\App\Community\Settings
+  - Hubleto\App\Community\Auth
+  - Hubleto\App\Community\Customers
+  - Hubleto\App\Community\Documents
+  - Hubleto\App\Community\Workflow
+  - Hubleto\App\Community\Calendar
+  - Hubleto\App\Community\Dashboards
+tags:
+  - servers
+  - it administration
+  - health monitoring
+  - infrastructure
