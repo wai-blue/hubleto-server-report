@@ -1,6 +1,6 @@
 namespace: Hubleto\App\External\WaiBlue\ServerReport
-appType: custom
-sidebarGroup: custom
+appType: external
+sidebarGroup: productivity
 rootUrlSlug: server-report
 name: Server report
 icon: fas fa-server

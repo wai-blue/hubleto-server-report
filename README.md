@@ -17,7 +17,8 @@ Calendar, Dashboards.
 ## Installation
 
   1. `composer require wai-blue/hubleto-server-report`
-  2. `php hubleto install app Hubleto\App\External\WaiBlue\ServerReport`
+  2. `php hubleto app install Hubleto\App\External\WaiBlue\ServerReport`
+  3. `npm install & npm run build`
 
 ## What is where
 
